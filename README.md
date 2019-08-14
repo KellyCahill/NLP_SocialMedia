@@ -1,9 +1,9 @@
 # NLP SocialMedia
-##Motivation
+## Motivation
 summarize topics of social media data 
 
-##Model Training 
+## Model Training 
 
-##Model Evaluating 
+## Model Evaluating 
 
-##Visualization
+## Visualization
