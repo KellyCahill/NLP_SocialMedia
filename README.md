@@ -228,7 +228,7 @@ for input_ids, input_mask, segment_ids, label_ids in eval_dataloader:
     positives_raw.append(probabilities.detach().cpu().numpy()[0][1])
 ```
 
-### Get model evalutation statistics: 
+### Output model evalutation statistics: 
 ```python 
 eval_loss = eval_loss / nb_eval_steps
 preds = preds[0]
