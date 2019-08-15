@@ -1,3 +1,6 @@
+##Python code for training BERT paraphrase model 
+
+######################Section 1: Import required packages and pretrained Bert model. Set logging################################
 ##!pip install pytorch-pretrained-bert
 import pandas as pd
 import torch
@@ -23,6 +26,8 @@ csv.field_size_limit(2147483647) # Increase CSV reader's field limit incase we h
 logging.basicConfig(level=logging.INFO)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+##############################################Section 2: create functions to prepare data for BERT ######################################################
 
 class InputExample(object):
     """A single training/test example for sequence classification."""
@@ -124,7 +129,7 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
         else:
             tokens_b.pop()
             
-def convert_example_to_feature(example_row):
+def convert_example_to_feature(example_row): #prepare data object for BERT model
     # return example_row
     example, label_map, max_seq_length, tokenizer, output_mode = example_row
 
@@ -176,12 +181,14 @@ def convert_example_to_feature(example_row):
                          input_mask=input_mask,
                          segment_ids=segment_ids,
                          label_ids=label_ids)
+
+#########################################SECTION 3: Set directories and upload data####################################################
  DATA_DIR = "data/"
 
 # Bert pre-trained model selected in the list: bert-base-uncased,
 # bert-large-uncased, bert-base-cased, bert-large-cased, bert-base-multilingual-uncased,
 # bert-base-multilingual-cased, bert-base-chinese.
-BERT_MODEL = 'bert-base-cased'
+BERT_MODEL = 'bert-large-uncased'
 
 # The name of the task to train.I'm going to name this 'yelp'.
 TASK_NAME = 'twitter'
@@ -198,7 +205,7 @@ CACHE_DIR = 'cache/'
 OUTPUT_MODE = 'classification'
 output_mode = OUTPUT_MODE
 cache_dir = CACHE_DIR
-
+###create directories if they're not already present
 if os.path.exists(REPORTS_DIR) and os.listdir(REPORTS_DIR):
     REPORTS_DIR += f'/report_{len(os.listdir(REPORTS_DIR))}'
     os.makedirs(REPORTS_DIR)
@@ -212,24 +219,21 @@ if os.path.exists(OUTPUT_DIR) and os.listdir(OUTPUT_DIR):
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
+###Upload data####
 train_df = pd.read_csv('data/train.csv', header=None)
-test_df = pd.read_csv('data/test.csv', header=None)
-
-# Change the labeling
-train_df[0] = (train_df[0] == 2).astype(int)
-test_df[0] = (test_df[0] == 2).astype(int)
 
 # convert to BERT friendly structure
 train_df_bert = pd.DataFrame({
     'id': range(len(train_df)),
     'label': train_df[0],
-    'alpha': ['a'] * train_df.shape[0],
+    'alpha': ['a'] * train_df.shape[0], #BERT requires a column of a single repeating character, unclear why
     'text_a': train_df[1].replace(r'\n', ' ', regex=True),
     'text_b': train_df[1].replace(r'\n', ' ', regex=True)
 })
 
-train_df_bert.to_csv('data/train.tsv', sep='\t', index=False, header=False)
+train_df_bert.to_csv('data/train.tsv', sep='\t', index=False, header=False) #must be saved as a TSV file
 
+####################################################Section 4: Model Training############################################################
 # Training
 # The maximum total input sequence length after WordPiece tokenization.
 # Sequences longer than this will be truncated, and sequences shorter than this will be padded.
@@ -240,13 +244,13 @@ num_labels = len(label_list)
 num_train_optimization_steps = int(train_examples_len / TRAIN_BATCH_SIZE / GRADIENT_ACCUMULATION_STEPS) * NUM_TRAIN_EPOCHS
 
 # Load pre-trained model tokenizer (vocabulary)
-tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
-MAX_SEQ_LENGTH = 128
+tokenizer = BertTokenizer.from_pretrained('bert-large-uncased', do_lower_case=False)
+MAX_SEQ_LENGTH = 512 #maximum number of characters BERT can accept 
 
-TRAIN_BATCH_SIZE = 24
-EVAL_BATCH_SIZE = 32
-LEARNING_RATE = 2e-5
-NUM_TRAIN_EPOCHS = 1
+TRAIN_BATCH_SIZE = 24 #takes 24 lines at a time in training
+EVAL_BATCH_SIZE = 32 #takes 32 lines at a time in testing
+LEARNING_RATE = 2e-5 
+NUM_TRAIN_EPOCHS = 3
 RANDOM_SEED = 42
 GRADIENT_ACCUMULATION_STEPS = 1
 WARMUP_PROPORTION = 0.1
@@ -279,10 +283,11 @@ pool.terminate()
 with open(DATA_DIR + "train_features.pkl", "wb") as f:
     pickle.dump(train_features, f)
 
-# Load pre-trained model (weights)
+# Load pre-trained model weights
 model = BertForSequenceClassification.from_pretrained(BERT_MODEL, cache_dir=CACHE_DIR, num_labels=num_labels)
 model.to(device)
 
+## Set optimization for backpropagation
 param_optimizer = list(model.named_parameters())
 no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
 optimizer_grouped_parameters = [
@@ -299,6 +304,7 @@ global_step = 0
 nb_tr_steps = 0
 tr_loss = 0
 
+####Log training performance and evaluation metrics####
 logger.info("***** Running training *****")
 logger.info("  Num examples = %d", train_examples_len)
 logger.info("  Batch size = %d", TRAIN_BATCH_SIZE)
@@ -335,7 +341,7 @@ for _ in trange(int(NUM_TRAIN_EPOCHS), desc="Epoch"):
 
         if GRADIENT_ACCUMULATION_STEPS > 1:
             loss = loss / GRADIENT_ACCUMULATION_STEPS
-
+## Backpropagation 
         loss.backward()
         print("\r%f" % loss, end='')
 
