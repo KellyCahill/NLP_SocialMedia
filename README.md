@@ -3,6 +3,7 @@
 ## Motivation
 summarize topics of social media data into an interactive network graph
 
+![Network Screen shot using college, diet, and anxiety tweets](https://github.com/KellyCahill/NLP_SocialMedia/blob/master/network%20graph%20Twitter/network_screenshot.PNG?raw=true)
 ## Model Training 
 ### Required imports
 Import the following packages into the python workspace: 
