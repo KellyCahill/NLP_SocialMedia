@@ -262,28 +262,8 @@ if os.path.exists(OUTPUT_DIR) and os.listdir(OUTPUT_DIR):
     raise ValueError("Output directory ({}) already exists and is not empty.".format(OUTPUT_DIR))
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
-
-num_labels = len(label_list)
-
-# Set training steps based on the number of epochs
-num_train_optimization_steps = int(train_examples_len / TRAIN_BATCH_SIZE / GRADIENT_ACCUMULATION_STEPS) * NUM_TRAIN_EPOCHS
-
-# Load pre-trained model tokenizer (vocabulary)
-tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
-MAX_SEQ_LENGTH = 512 #max number of characters 
-
-TRAIN_BATCH_SIZE = 24
-EVAL_BATCH_SIZE = 32
-LEARNING_RATE = 2e-5
-NUM_TRAIN_EPOCHS = 1
-RANDOM_SEED = 42
-GRADIENT_ACCUMULATION_STEPS = 1
-WARMUP_PROPORTION = 0.1
-
-CONFIG_NAME = "config.json"
-WEIGHTS_NAME = "pytorch_model.bin"
-```
-### Set training parameters 
+    
+### Set training parameters and load pre-trained model tokenizer
 ```python
 # Training
 # The maximum total input sequence length after WordPiece tokenization.
@@ -491,8 +471,7 @@ def compute_metrics(task_name, labels, preds, positives):
     assert len(positives) == len(labels)
     return get_eval_report(task_name, labels, preds, positives)
 ```
-
-### Load pretrained model (BertEval.py lines 284 - 310) 
+### Load pre-trained model (see code above or BertEval.py)
 
 ### Run prediction on labeled test set
 ```python
@@ -605,7 +584,7 @@ for input_ids, input_mask, segment_ids, label_ids in eval_dataloader:
 An interactive network graph of social media topics is located in the network graph twitter folder. The data needs to prepared as a JSON file. We use d3.js to build the network. 
 
 ### JSON data example (full data found in network graph twitter folder):
-1) Nodes= actual tweets (given by an ID number)
+1) Nodes = actual tweets (given by an ID number)
 2) group is pre-determined clustering group (optional, can set to 1)
 3) body is tweet text to be shown when shift is held and curser is dragged over node
 4) Source is the source node (by id) 
