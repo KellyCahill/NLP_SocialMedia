@@ -1,4 +1,4 @@
-# NLP SocialMedia
+# Using BERT for social media topic clustering and analysis 
 
 ## Motivation
 Summarize text from social media (or other sources) into an interactive network graph
