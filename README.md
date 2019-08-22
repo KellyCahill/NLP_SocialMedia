@@ -1,9 +1,19 @@
 # NLP SocialMedia
 
 ## Motivation
-summarize topics of social media data into an interactive network graph
-
+Summarize text from social media (or other sources) into an interactive network graph
 ![Network Screen shot using college, diet, and anxiety tweets](https://github.com/KellyCahill/NLP_SocialMedia/blob/master/network%20graph%20Twitter/network_screenshot.PNG?raw=true)
+
+## Bert Background 
+* BERT (Bidirectional Encoding Representations from Transformers) is a recent huge and complex deep learning model developed at Google
+* Previous unsupervised NLP models (LDA/TF-IDF) work well in matching text according to keyword searches where the key words are identical in each sentence
+* BERT is able to capture the full context of the entire sequence of words that precede and follow a word in a sentence(bidirectional context)
+
+## Modeling approach
+* Twitter paraphrase corpus was used to train the model. Paraphrasing is a difficult task that allows for a conservative prediction in a testing set. 
+* When applying new unlabeled text pairs to the model, we can use the probability of of paraphrased as a distance metric or similarity score for network building. 
+![Methods](https://github.com/KellyCahill/NLP_SocialMedia/blob/master/img/steps.PNG)
+![paraphrase example](https://github.com/KellyCahill/NLP_SocialMedia/blob/master/img/dataex.PNG)
 ## Model Training 
 ### Required imports
 Import the following packages into the python workspace: 
