@@ -42,7 +42,7 @@ import multiprocessing
 The model is trained using BERT on the twitter paraphrase corpus (Twitter_Corpus_train.csv). The data needs to be prepared into a tsv as follows: 
 
 ```python
-train_df = pd.read_csv('data/train.csv', header=None)
+train_df = pd.read_csv('data/Twitter_Corpus_train.csv', header=None)
 # convert to BERT friendly structure
 train_df_bert = pd.DataFrame({
     'id': range(len(train_df)),
@@ -55,7 +55,7 @@ train_df_bert = pd.DataFrame({
 train_df_bert.to_csv('data/train.tsv', sep='\t', index=False, header=False)
 ```
 
-Set Logging: 
+Set Logging so that the user can follow along with the training process: 
 ```python
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
