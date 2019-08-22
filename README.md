@@ -41,7 +41,7 @@ import multiprocessing
 
 * The model is trained using BERT on the twitter paraphrase corpus (Twitter_Corpus_train.csv).
 * The data needs to be prepared into a tsv as follows: 
-
+* Bert requires a column of a single character (a), reasoning why is unclear
 ```python
 train_df = pd.read_csv('data/Twitter_Corpus_train.csv', header=None)
 # convert to BERT friendly structure
