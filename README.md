@@ -18,7 +18,7 @@ Summarize text from social media (or other sources) into an interactive network 
 ### Required imports
 Import the following packages into the python workspace as well as the pre-trained bert model: 
 ```python
-!pip install pytorch-pretrained-bert
+!pip install pytorch-pretrained-bert # use !pip in jupyter notebook or ust pip in linux
 import pandas as pd
 import torch
 
