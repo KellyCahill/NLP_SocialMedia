@@ -16,9 +16,9 @@ Summarize text from social media (or other sources) into an interactive network 
 ![paraphrase example](https://github.com/KellyCahill/NLP_SocialMedia/blob/master/img/dataex.PNG)
 ## Model Training 
 ### Required imports
-Import the following packages into the python workspace: 
+Import the following packages into the python workspace as well as the pre-trained bert model: 
 ```python
-##!pip install pytorch-pretrained-bert
+!pip install pytorch-pretrained-bert
 import pandas as pd
 import torch
 
@@ -39,7 +39,8 @@ import multiprocessing
 
 ### Data prep
 
-The model is trained using BERT on the twitter paraphrase corpus (Twitter_Corpus_train.csv). The data needs to be prepared into a tsv as follows: 
+* The model is trained using BERT on the twitter paraphrase corpus (Twitter_Corpus_train.csv).
+* The data needs to be prepared into a tsv as follows: 
 
 ```python
 train_df = pd.read_csv('data/Twitter_Corpus_train.csv', header=None)
@@ -223,8 +224,8 @@ def convert_example_to_feature(example_row): #prepare data object for BERT model
 ```
 
 ### Set directories and model parameters 
-DATA_DIR is where the tsv data is stored 
-BERT_MODEL can take on varying forms and sizes. Bert-large-uncased ignores cases and has 24 layers (as compared to bert base which has 12 layers and considers case)
+* DATA_DIR is where the tsv data is stored 
+* BERT_MODEL can take on varying forms and sizes. Bert-large-uncased ignores cases and has 24 layers (as compared to bert base which has 12 layers and considers case)
 
 ```python
 DATA_DIR = "data/"
@@ -405,7 +406,9 @@ tokenizer.save_vocabulary(OUTPUT_DIR)
 ```
 
 ## Model Evaluating with Test set (Twitter_Corpus_test.csv)
-Model evaluation using the twitter paraphrase corpus test set which is already labeled follows similar method above, using all functions from above. Adjust the files as shown in BertEval.py
+* Model evaluation using the twitter paraphrase corpus test set which is already labeled follows similar method above, using all functions from above. 
+* Adjust the files as shown in BertEval.py 
+* Make sure BERT_MODEL is the name of the trained model
 ```python
 # The input data dir. Should contain the .tsv files (or other data files) for the task.
 DATA_DIR = "data/"
@@ -537,7 +540,9 @@ with open(output_eval_file, "w") as writer:
 
 ## Model Evaluation without test set
 
-Without a test set the evaluation is the same as above, except there are no performance statistics to calculate. Instead the probability of classification is used for each sentence pair. The probabilities (\bold{positives_raw}) are then used as a distance metric for further downstream analysis such as cluster or network analyses. 
+* Without a test set the evaluation is the same as above, except there are no performance statistics to calculate. 
+* Instead the probability of classification is used for each sentence pair. 
+* The probabilities (positives_raw) are then used as a distance metric for further downstream analysis such as cluster or network analyses. 
 
 ```python
 eval_sampler = SequentialSampler(eval_data)
